@@ -48,8 +48,13 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     print(format_table(result))
     if args.out is not None:
-        write_flows_csv(result, args.out / "flows.csv")
-        write_cwnd_csv(result, args.out / "cwnd.csv")
+        try:
+            write_flows_csv(result, args.out / "flows.csv")
+            write_cwnd_csv(result, args.out / "cwnd.csv")
+        except OSError as exc:
+            reason = exc.strerror or exc
+            print(f"error: cannot write results to {args.out}: {reason}", file=sys.stderr)
+            return 2
         print(f"wrote {args.out / 'flows.csv'} and {args.out / 'cwnd.csv'}")
         if args.plots:
             from packetscape.plots import plot_results
