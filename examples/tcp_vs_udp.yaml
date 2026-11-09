@@ -1,0 +1,16 @@
+# A TCP-like flow competes with a constant-bit-rate flow over a lossy bottleneck.
+seed: 7
+duration: 20
+nodes: [a, b, r, c]
+links:
+  - {a: a, b: r, bandwidth_mbps: 100, delay_ms: 1}
+  - {a: b, b: r, bandwidth_mbps: 100, delay_ms: 1}
+  - a: r
+    b: c
+    bandwidth_mbps: 5
+    delay_ms: 15
+    loss_prob: 0.001
+    queue: {type: droptail, capacity: 40}
+flows:
+  - {id: tcp1, src: a, dst: c, kind: tcp, cc: aimd}
+  - {id: cbr1, src: b, dst: c, kind: cbr, rate_mbps: 2, start: 2.0}

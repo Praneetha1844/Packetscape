@@ -1,0 +1,23 @@
+# AIMD flows through a RED bottleneck. Compare with dumbbell_aimd.yaml, which uses drop-tail.
+seed: 42
+duration: 30
+nodes: [s1, s2, r1, r2, d1, d2]
+links:
+  - {a: s1, b: r1, bandwidth_mbps: 100, delay_ms: 2}
+  - {a: s2, b: r1, bandwidth_mbps: 100, delay_ms: 2}
+  - a: r1
+    b: r2
+    bandwidth_mbps: 10
+    delay_ms: 20
+    queue:
+      type: red
+      capacity: 50
+      min_threshold: 10
+      max_threshold: 30
+      max_p: 0.1
+      weight: 0.02
+  - {a: r2, b: d1, bandwidth_mbps: 100, delay_ms: 2}
+  - {a: r2, b: d2, bandwidth_mbps: 100, delay_ms: 2}
+flows:
+  - {id: f1, src: s1, dst: d1, kind: tcp, cc: aimd, start: 0.0}
+  - {id: f2, src: s2, dst: d2, kind: tcp, cc: aimd, start: 1.0}
