@@ -9,7 +9,6 @@
 from __future__ import annotations
 
 import random
-from functools import partial
 
 from packetscape.congestion import CongestionControl
 from packetscape.events import EventHandle, Scheduler
@@ -206,7 +205,7 @@ class TcpSender:
 
     def _arm_timer(self) -> None:
         self._cancel_timer()
-        self._timer = self._scheduler.schedule(self._rto, partial(self._on_timeout))
+        self._timer = self._scheduler.schedule(self._rto, self._on_timeout)
 
     def _cancel_timer(self) -> None:
         if self._timer is not None:
