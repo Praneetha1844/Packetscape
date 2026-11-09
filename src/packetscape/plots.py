@@ -15,7 +15,9 @@ def plot_results(result: SimulationResult, out_dir: Path) -> list[Path]:
         matplotlib.use("Agg")  # headless: no display required
         import matplotlib.pyplot as plt
     except ImportError as exc:  # pragma: no cover - depends on optional extra
-        raise RuntimeError("plotting requires matplotlib: pip install 'packetscape[plots]'") from exc
+        raise RuntimeError(
+            "plotting requires matplotlib: pip install 'packetscape[plots]'"
+        ) from exc
 
     out_dir.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []
