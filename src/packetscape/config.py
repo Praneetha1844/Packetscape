@@ -229,6 +229,10 @@ def _parse_flow(raw: object, where: str, nodes: set[str], duration: float) -> Fl
     packets = _integer(data, "packets", where, ge=1) if "packets" in data else None
     if packets is not None and kind != "tcp":
         raise ConfigError(f"{where}: packets is only valid for tcp flows")
+    if kind != "tcp" and ("cc" in data or "window" in data):
+        raise ConfigError(f"{where}: cc and window are only valid for tcp flows")
+    if "window" in data and cc != "fixed":
+        raise ConfigError(f"{where}: window is only valid with cc: fixed")
     return FlowConfig(
         id=_string(data, "id", where),
         src=src,
@@ -263,7 +267,17 @@ def parse_config(raw: object, name: str = "scenario") -> SimConfig:
     raw_links = data.get("links")
     if not isinstance(raw_links, list) or not raw_links:
         raise ConfigError("config.links: expected a non-empty list")
-    links = tuple(_parse_link(item, f"config.links[{i}]", nodes) for i, item in enumerate(raw_links))
+    links = tuple(
+        _parse_link(item, f"config.links[{i}]", nodes) for i, item in enumerate(raw_links)
+    )
+    seen_pairs: set[frozenset[str]] = set()
+    for i, link in enumerate(links):
+        pair = frozenset((link.a, link.b))
+        if pair in seen_pairs:
+            raise ConfigError(
+                f"config.links[{i}]: duplicate link between {link.a!r} and {link.b!r}"
+            )
+        seen_pairs.add(pair)
 
     raw_flows = data.get("flows")
     if not isinstance(raw_flows, list) or not raw_flows:
