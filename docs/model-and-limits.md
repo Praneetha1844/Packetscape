@@ -32,6 +32,11 @@ Packetscape trades fidelity for readability. Treat results as qualitative compar
 - **ACK drops** are counted in a single counter and excluded from per-flow loss figures.
 - **RED** omits the idle-time correction of the original algorithm.
 - **Initial window** is 2 packets and the initial slow-start threshold is effectively unbounded.
+- **Loss recovery** reacts to the third duplicate ACK by setting the window to the new threshold at once. There is no window inflation during recovery and no NewReno partial-ACK handling, so several losses in one window usually end in a timeout. After a timeout only the oldest unacknowledged packet is retransmitted.
+- **RTT samples** come from the last packet a new ACK covers, and never from a retransmitted packet (Karn's rule). When an ACK jumps over a filled hole, that sample includes the time the packet waited behind the loss, so it can be larger than the true round-trip time.
+- **Retransmissions after `stop`:** a TCP flow sends no new data once its stop time passes, but its retransmission timer keeps running until outstanding data is acknowledged or the run ends.
+- **Queue capacity** counts waiting packets. The packet being serialized has left the queue, so a link holds up to `capacity + 1` packets.
+- **Delay of retransmitted packets** is measured from the retransmitted copy, not from the first transmission, so it understates the application-level delay of recovered packets.
 
 ## Validity guidance
 

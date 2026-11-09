@@ -66,7 +66,7 @@ flows:
   - {id: v1, src: s2, dst: d2, kind: cbr, rate_mbps: 2, start: 5}
 ```
 
-Unknown keys and invalid values are rejected with the path of the offending field (for example `config.links[1].queue: thresholds must satisfy 0 < min < max <= capacity`).
+Unknown keys and invalid values are rejected with the path of the offending field (for example `config.links[1].queue: thresholds must satisfy 0 < min < max <= capacity`). Two links between the same pair of nodes, `cc` or `window` on a non-TCP flow, and `window` without `cc: fixed` are errors. The full reference is in [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
 
 Flow options: `start` and `stop` (seconds), `packet_size` (bytes, default 1000), `cc` (`fixed`, `aimd`, `cubic`; TCP only), `window` (packets; `fixed` only), `packets` (finite transfer size; TCP only), `rate_mbps` (CBR and Poisson only).
 
@@ -107,7 +107,10 @@ examples/          scenario files
 
 ## Documentation
 
+Everything is indexed in [docs/index.md](docs/index.md).
+
 - [Architecture](docs/ARCHITECTURE.md)
+- [Scenario reference](docs/CONFIGURATION.md) and [command line](docs/CLI.md)
 - [Model assumptions and limits](docs/model-and-limits.md)
 - [Relation to CCNA topics](docs/ccna-relation.md)
 - Decision records: [event-driven design](docs/adr/0001-discrete-event-over-time-stepped.md), [seeded determinism](docs/adr/0002-seeded-per-component-randomness.md), [simplified transport](docs/adr/0003-simplified-packet-granular-transport.md)
