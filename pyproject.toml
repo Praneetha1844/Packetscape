@@ -29,6 +29,11 @@ dev = [
     "types-PyYAML>=6.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/Praneetha1844/Packetscape"
+Source = "https://github.com/Praneetha1844/Packetscape"
+Issues = "https://github.com/Praneetha1844/Packetscape/issues"
+
 [project.scripts]
 packetscape = "packetscape.cli:main"
 
